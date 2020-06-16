@@ -3,20 +3,19 @@ import numpy as np
 class ART():
     Y          = []
     Js         = []
-    _W         = []
-    categories = []
+    _W         = []    
     
     def __init__(self, I, alpha = 0.001, rho = 0.5, beta = 1):
         self._alpha = alpha
         self._rho   = rho
         self._beta  = beta
-        self.setI(I)  
-        self.setW(np.ones(self.I.shape))
-        #self.setW(np.ones((1,len(self.I[0]))))        
+        self.setI(I)
+        self.setW(np.ones((1, len(self.I[0]))))        
 
     @staticmethod
     def layerF0(I, valueMax = 0):
-        IC = ART.normalize(I, valueMax)
+        IC = np.asarray(I)
+        IC = ART.normalize(IC, valueMax)
         IC = ART.complement(IC)    
         return IC
     
@@ -37,8 +36,7 @@ class ART():
     def AND(self, arr1, arr2):        
         try:        
             return np.minimum(arr1, arr2)
-        except Exception as e:
-            print(e)
+        except Exception as e:            
             print("AND", arr1, arr2)
             quit()
     
@@ -78,19 +76,8 @@ class ART():
     def vigilanceValue(self, IC, W):
         x   = self.AND(IC, W)
         return (sum(x) / sum(IC))
-    
-    def groupCategories(self, IC, W, alpha = 0.0001):
-        categories  = []
-        for i in range(0, len(IC)):
-            a       = np.sum(self.AND(IC[i], W[i]))
-            temp    = round(a / (alpha + np.sum(W[i])), 5)
-            categories.append(temp)
+
+    def categories(self, I, W, alpha=0.001):
+        x = np.minimum(I, W)
+        categories = x.sum(axis=1) / (alpha + W.sum(axis=1))
         return categories
-    
-    def indexOfChampion(self, categories):
-        championB      = max(categories)
-        
-        return categories.index(championB)
-    
-    def valueOfChampion(self, categories):
-        return max(categories)
