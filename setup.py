@@ -32,7 +32,9 @@ setup(
         'Programming Language :: Python :: 3.8',
     ],
     description="A Python Library of Neural network ARTMAP",
-    install_requires=requirements,
+    install_requires=[
+        'numpy',
+    ],
     license="MIT license",
     long_description=readme + '\n\n' + history,
     include_package_data=True,
@@ -43,6 +45,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/DavidVinicius/python_artmap',
-    version='0.1.0',
+    version='0.2.0',
     zip_safe=False,
 )

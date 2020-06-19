@@ -30,7 +30,7 @@ class ARTFUZZY(ART):
             self.match(i)
 
     def match(self, indexOfInput):
-        categories    = self.categories(self.I[indexOfInput], self.W, self._alpha)        
+        categories    = self.categories(self.I[indexOfInput], self.W)        
         champion      = categories.max()
         championIndex = categories.argmax()
 

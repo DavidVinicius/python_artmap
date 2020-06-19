@@ -23,12 +23,15 @@ class ART():
     def normalize(arr, valueMax = 0):
         if valueMax == 0:
             valueMax = arr.max()
+        
+        if valueMax == 0:
+            valueMax = 1
 
         I  = np.divide(arr, valueMax)
         return I
     
     @staticmethod
-    def complement(I):
+    def complement(I):        
         I = np.concatenate((I, (1-I)), axis=1)
         return I        
         
@@ -77,7 +80,7 @@ class ART():
         x   = self.AND(IC, W)
         return (sum(x) / sum(IC))
 
-    def categories(self, I, W, alpha=0.001):
+    def categories(self, I, W):
         x = np.minimum(I, W)
-        categories = x.sum(axis=1) / (alpha + W.sum(axis=1))
+        categories = x.sum(axis=1) / (self._alpha + W.sum(axis=1))
         return categories
