@@ -26,20 +26,18 @@ class ARTFUZZY(ART):
         return ((sum(x) / sum(IC)) >= self._rho)    
 
     def train(self):        
-        for i in range(0, len(self.I)):
+        for i in self.I:
             self.match(i)
 
-    def match(self, indexOfInput):
-        categories    = self.categories(self.I[indexOfInput], self.W)        
+    def match(self, inputValue):
+        categories    = self.categories(inputValue, self.W)        
         champion      = categories.max()
         championIndex = categories.argmax()
 
         while champion != 0:            
-            if self.hadRessonance(self.I[indexOfInput], self.W[championIndex]):                
-                self.W[championIndex] = self.learn(self.I[indexOfInput], self.W[championIndex])
-
-                self.activate(championIndex)
-                self.Js.append([indexOfInput, championIndex])
+            if self.hadRessonance(inputValue, self.W[championIndex]):                
+                self.W[championIndex] = self.learn(inputValue, self.W[championIndex])
+                self.activate(championIndex)                
 
                 self.championIndex = championIndex
                 self.championValue = champion
@@ -51,26 +49,11 @@ class ARTFUZZY(ART):
                 championIndex = categories.argmax()
         else:
             self.setW(
-                np.insert(self.W, len(self.W), self.I[indexOfInput], 0)
+                np.insert(self.W, len(self.W), inputValue, 0)
             )
-            self.Js.append([indexOfInput, championIndex+1])
-            self.activate(championIndex+1)
-            self.championIndex = championIndex+1
+            championIndex += 1            
+            self.activate(championIndex)
+            self.championIndex = championIndex
             self.championValue = champion
-
-    '''def searchForChampions(self, indexOfInput):
-        self.categoriesArray = self.categories(self._alpha)
-        champion = max(self.categoriesArray)
-        championIndex = self.categoriesArray.index(champion)
-
-        while champion != 0:
-            if self.hadRessonance(self.I[indexOfInput], self.W[championIndex]):
-
-                self.championIndex = championIndex
-                self.championValue = champion
-
-                break
-            else:
-                self.categoriesArray[championIndex] = 0
-                champion = self.valueOfChampion(self.categoriesArray)
-                championIndex = self.indexOfChampion(self.categoriesArray)'''
+        
+        return self.championIndex
