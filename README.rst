@@ -40,25 +40,27 @@ How use it
 
         from python_artmap import ARTMAPFUZZY
         
-        entrada  = np.array([
+        input  = np.array([
                 [0, 0], 
                 [0, 1], 
                 [1, 0], 
                 [1, 1]        
         ])
 
-        saida  = np.array([
+        output  = np.array([
                 [0],
                 [0],
                 [0],
                 [1],
         ])
 
-        ArtMap = ARTMAPFUZZY(entrada, saida, rhoInterART=0.2, rhoARTa=0.6, rhoARTb=0.9)
+        ArtMap = ARTMAPFUZZY(input, output, rhoARTa=0.6, rhoARTb=0.9)
         ArtMap.train()
 
-        ArtMap.test([0, 0], 0.1) #{'index': 0, 'ArtB': [0.0, 1.0], 'id': '0010'}
-        ArtMap.test([1, 0], 0.1) #{'index': 1, 'ArtB': [1.0, 0.0], 'id': '1000'}
+        ArtMap.test([0, 0]) #{'index': 0, 'ArtB': [0.0, 1.0], 'id': '0010'}
+        ArtMap.test([0, 1]) #{'index': 0, 'ArtB': [0.0, 1.0], 'id': '0010'}
+        ArtMap.test([1, 0]) #{'index': 0, 'ArtB': [0.0, 1.0], 'id': '0010'}
+        ArtMap.test([1, 1]) #{'index': 1, 'ArtB': [1.0, 0.0], 'id': '1000'}
 
 
 

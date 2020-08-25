@@ -7,12 +7,12 @@ class ARTMAPFUZZY(ART):
     championsA = []
 
 
-    def __init__(self, INPUT, OUTPUT, rhoARTa=0.5, rhoARTb=0.5, rhoInterART=0.5, alphaARTa=0.001, betaARTa=1, alphaARTb=0.001, betaARTb=1, maxValueArta=1, maxValueArtb=1, epsilon=0.001):
+    def __init__(self, INPUT, OUTPUT, rhoARTa=0.5, rhoARTb=0.5, alphaARTa=0.001, betaARTa=1, alphaARTb=0.001, betaARTb=1, maxValueArta=1, maxValueArtb=1, epsilon=0.001):
         self.ArtA = ARTFUZZY(self.layerF0(INPUT, maxValueArta), rho=rhoARTa, alpha=alphaARTa, beta=betaARTa)
         self.ArtB = ARTFUZZY(self.layerF0(OUTPUT, maxValueArtb), rho=rhoARTb, alpha=alphaARTb, beta=betaARTb)
         self.epsilon = epsilon
         
-        self.rho  = rhoInterART
+        self.rho  = 1
         self.WAB  = np.ones([1, OUTPUT.shape[0]])
 
     def train(self):
@@ -59,28 +59,33 @@ class ARTMAPFUZZY(ART):
         temp[i] = 1
         return list(temp)
     
-    def test(self, INPUT, rho, maxInputValue=1):  
+    def test(self, INPUT, maxInputValue=1):  
         INPUT           = np.divide(INPUT, maxInputValue)                         
         INPUT           = np.concatenate((INPUT, (1-INPUT)), axis=0)
         categories      = self.ArtA.categories(INPUT, self.ArtA.W)
         championA       = categories.max()
         championIndexA  = categories.argmax()
-
-        while championA != 0:
-            if self.hadRessonance(INPUT, self.ArtA.I[championIndexA], rho):
-                t    = list(self.WAB[championIndexA])
-                artB = list(self.ArtB.W[t.index(1)])                
-                s    = [str(i) for i in artB]
-                return {
-                    "index": t.index(1),                    
-                    "ArtB": artB,
-                    "id": "".join(s).replace(".", "")
-                }
-            else:
-                categories[championIndexA] = 0                
-                championA                  = categories.max()
-                championIndexA             = categories.argmax()
-        
+        rhoTest         = self.ArtA._rho - (self.ArtA._rho * 0.1)
+        while rhoTest > 0.00001:
+            while championA != 0:
+                if self.hadRessonance(INPUT, self.ArtA.I[championIndexA], rhoTest):
+                    t    = list(self.WAB[championIndexA])
+                    artB = list(self.ArtB.W[t.index(1)])                
+                    s    = [str(i) for i in artB]
+                    return {
+                        "index": t.index(1),                    
+                        "ArtB": artB,
+                        "id": "".join(s).replace(".", "")
+                    }
+                else:
+                    categories[championIndexA] = 0                
+                    championA                  = categories.max()
+                    championIndexA             = categories.argmax()
+            categories      = self.ArtA.categories(INPUT, self.ArtA.W)
+            championA       = categories.max()
+            championIndexA  = categories.argmax()
+            rhoTest         = rhoTest - (rhoTest * 0.25)            
+            
         return -1
 
             
