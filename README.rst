@@ -38,6 +38,7 @@ How use it
 
 .. code-block:: python
 
+        import numpy as np
         from python_artmap import ARTMAPFUZZY
         
         input  = np.array([
